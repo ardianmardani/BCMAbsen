@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="./">
+    <title>Login Absensi Pegawai</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+        }
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: #667eea;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+        }
+        .error {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 10px;
+            background: #ffeaea;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        .demo-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">AP</div>
+        <h2>Selamat Datang</h2>
+        <p class="subtitle">Sistem Absensi Pegawai</p>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="nip">Nomor Induk Pegawai (NIP)</label>
+                <input type="text" id="nip" name="nip" placeholder="Masukkan NIP Anda" required>
+            </div>
+            <button type="submit">Masuk ke Sistem</button>
+        </form>
+        
+        <div id="errorMessage" class="error"></div>
+        
+        <div class="demo-info">
+            <strong>Demo Login:</strong><br>
+            NIP: <code>2094738515</code>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const nip = document.getElementById('nip').value.trim();
+            const errorMessage = document.getElementById('errorMessage');
+            
+            if (nip === '2094738515') {
+                // Simpan status login
+                localStorage.setItem('loggedIn', 'true');
+                localStorage.setItem('nip', nip);
+                localStorage.setItem('loginTime', new Date().toISOString());
+                
+                // Redirect ke halaman absen - PASTI BISA
+                window.location.href = 'C:/Users/User/Downloads/Aplikasi/absen.html';
+            } else {
+                errorMessage.textContent = '❌ NIP tidak ditemukan. Gunakan NIP: 2094738515 untuk demo';
+                errorMessage.style.display = 'block';
+                
+                // Sembunyikan error setelah 5 detik
+                setTimeout(() => {
+                    errorMessage.style.display = 'none';
+                }, 5000);
+            }
+        });
+
+        // Focus ke input NIP saat halaman load
+        document.getElementById('nip').focus();
+    </script>
+</body>
+</html>

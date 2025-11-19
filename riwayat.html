@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="./">
+    <title>Riwayat Absensi - Sistem Pegawai</title>
+    <style>
+        /* CSS SAMA PERSIS SEPERTI SEBELUMNYA */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f6fa; color: #333; line-height: 1.6; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        .header { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 20px; text-align: center; }
+        .header h1 { color: #2c3e50; margin-bottom: 10px; font-size: 28px; }
+        .user-info { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .stat-card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.1); text-align: center; }
+        .stat-number { font-size: 24px; font-weight: bold; color: #667eea; margin-bottom: 5px; }
+        .stat-label { font-size: 14px; color: #666; }
+        .table-container { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 20px; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #e1e5e9; }
+        th { background: #f8f9fa; font-weight: 600; color: #2c3e50; }
+        tr:hover { background: #f8f9fa; }
+        .status-badge { padding: 4px 8px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+        .status-masuk { background: #d4edda; color: #155724; }
+        .action-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .btn { padding: 15px 25px; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; text-align: center; text-decoration: none; display: inline-block; }
+        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4); }
+        .btn-danger { background: #e74c3c; color: white; }
+        .btn-danger:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4); }
+        .empty-state { text-align: center; padding: 40px; color: #666; }
+        .empty-state img { width: 100px; opacity: 0.5; margin-bottom: 20px; }
+        @media (max-width: 768px) { .stats { grid-template-columns: 1fr; } .action-buttons { grid-template-columns: 1fr; } th, td { padding: 8px 10px; font-size: 14px; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>📊 Riwayat Absensi</h1>
+            <p>Catatan lengkap kehadiran Anda</p>
+        </div>
+
+        <!-- Informasi Pengguna -->
+        <div class="user-info">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <strong>👤 NIP:</strong> <span id="userNIP">-</span><br>
+                    <strong>📅 Periode:</strong> <span id="periode">-</span>
+                </div>
+                <div style="text-align: right;">
+                    <strong>Total Absensi:</strong> <span id="totalAbsensi">0</span> kali
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistik -->
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="statHariIni">0</div>
+                <div class="stat-label">Absen Hari Ini</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="statMingguIni">0</div>
+                <div class="stat-label">Minggu Ini</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="statBulanIni">0</div>
+                <div class="stat-label">Bulan Ini</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="statTotal">0</div>
+                <div class="stat-label">Total Semua</div>
+            </div>
+        </div>
+
+        <!-- Tabel Riwayat -->
+        <div class="table-container">
+            <h3>📋 Daftar Absensi</h3>
+            
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <div style="font-size: 48px;">📭</div>
+                <h3>Belum Ada Data Absensi</h3>
+                <p>Anda belum melakukan absensi masuk. Silakan lakukan absen pertama Anda.</p>
+            </div>
+
+            <table id="riwayatTable" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>Tanggal</th>
+                        <th>Waktu</th>
+                        <th>Status</th>
+                        <th>Jarak</th>
+                        <th>Lokasi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Data akan diisi oleh JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Tombol Aksi -->
+        <div class="action-buttons">
+            <a href="./absen.html" class="btn btn-primary">
+                📅 Kembali ke Absen
+            </a>
+            <button onclick="logout()" class="btn btn-danger">
+                🚪 Keluar dari Sistem
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Cek status login
+        if (!localStorage.getItem('loggedIn')) {
+            alert('⚠️ Silakan login terlebih dahulu!');
+            window.location.href = './index.html';
+        }
+
+        // Update informasi pengguna
+        document.getElementById('userNIP').textContent = localStorage.getItem('nip') || '2094738515';
+        
+        // Update periode
+        const now = new Date();
+        const options = { year: 'numeric', month: 'long' };
+        document.getElementById('periode').textContent = now.toLocaleDateString('id-ID', options);
+
+        // Load dan tampilkan riwayat
+        function loadRiwayat() {
+            const absensiHistory = JSON.parse(localStorage.getItem('absensiHistory') || '[]');
+            const tbody = document.querySelector('#riwayatTable tbody');
+            const emptyState = document.getElementById('emptyState');
+            const table = document.getElementById('riwayatTable');
+
+            // Update statistik
+            updateStatistics(absensiHistory);
+
+            if (absensiHistory.length === 0) {
+                emptyState.style.display = 'block';
+                table.style.display = 'none';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            table.style.display = 'table';
+
+            // Urutkan dari yang terbaru
+            absensiHistory.sort((a, b) => new Date(b.waktu) - new Date(a.waktu));
+
+            // Isi tabel
+            tbody.innerHTML = absensiHistory.map(absen => {
+                const waktu = new Date(absen.waktu);
+                return `
+                    <tr>
+                        <td>${absen.tanggal || waktu.toLocaleDateString('id-ID')}</td>
+                        <td>${absen.jam || waktu.toLocaleTimeString('id-ID')}</td>
+                        <td><span class="status-badge status-masuk">${absen.status}</span></td>
+                        <td>${absen.jarak ? absen.jarak.toFixed(2) + ' m' : '-'}</td>
+                        <td>${absen.lokasi ? 
+                            `Lat: ${absen.lokasi.lat.toFixed(6)}<br>Lng: ${absen.lokasi.lng.toFixed(6)}` : 
+                            '-'}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Update statistik
+        function updateStatistics(history) {
+            const today = new Date().toDateString();
+            const todayStart = new Date();
+            todayStart.setHours(0,0,0,0);
+            
+            const weekStart = new Date();
+            weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+            weekStart.setHours(0,0,0,0);
+            
+            const monthStart = new Date();
+            monthStart.setDate(1);
+            monthStart.setHours(0,0,0,0);
+
+            const statHariIni = history.filter(absen => 
+                new Date(absen.waktu) >= todayStart
+            ).length;
+
+            const statMingguIni = history.filter(absen => 
+                new Date(absen.waktu) >= weekStart
+            ).length;
+
+            const statBulanIni = history.filter(absen => 
+                new Date(absen.waktu) >= monthStart
+            ).length;
+
+            document.getElementById('statHariIni').textContent = statHariIni;
+            document.getElementById('statMingguIni').textContent = statMingguIni;
+            document.getElementById('statBulanIni').textContent = statBulanIni;
+            document.getElementById('statTotal').textContent = history.length;
+            document.getElementById('totalAbsensi').textContent = history.length;
+        }
+
+        // Fungsi logout
+        function logout() {
+            if (confirm('Apakah Anda yakin ingin keluar dari sistem?')) {
+                localStorage.removeItem('loggedIn');
+                localStorage.removeItem('nip');
+                localStorage.removeItem('loginTime');
+                window.location.href = './index.html';
+            }
+        }
+
+        // Initialize
+        loadRiwayat();
+    </script>
+</body>
+</html>
