@@ -89,11 +89,25 @@
         button:hover {
             transform: translateY(-2px);
         }
+        button:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+        }
         .error {
             color: #e74c3c;
             font-size: 14px;
             margin-top: 10px;
             background: #ffeaea;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        .success {
+            color: #27ae60;
+            font-size: 14px;
+            margin-top: 10px;
+            background: #eafaf1;
             padding: 10px;
             border-radius: 5px;
             display: none;
@@ -105,6 +119,20 @@
             margin-top: 20px;
             font-size: 14px;
             color: #666;
+        }
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -119,44 +147,102 @@
                 <label for="nip">Nomor Induk Pegawai (NIP)</label>
                 <input type="text" id="nip" name="nip" placeholder="Masukkan NIP Anda" required>
             </div>
-            <button type="submit">Masuk ke Sistem</button>
+            <button type="submit" id="loginBtn">
+                <span id="loginText">Masuk ke Sistem</span>
+                <span id="loginLoading" style="display: none;">
+                    <div class="loading"></div> Memverifikasi...
+                </span>
+            </button>
         </form>
         
         <div id="errorMessage" class="error"></div>
+        <div id="successMessage" class="success"></div>
         
         <div class="demo-info">
-            <strong>Demo Login:</strong><br>
-            NIP: <code>2094738515</code>
+            <strong>Database Google Sheets:</strong><br>
+            Gunakan NIP dari spreadsheet Anda<br>
+            Contoh: <code>1999011001</code>
         </div>
     </div>
 
+    <!-- Include config.js -->
+    <script src="./config.js"></script>
+
     <script>
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            const nip = document.getElementById('nip').value.trim();
-            const errorMessage = document.getElementById('errorMessage');
             
-            if (nip === '2094738515') {
-                // Simpan status login
-                localStorage.setItem('loggedIn', 'true');
-                localStorage.setItem('nip', nip);
-                localStorage.setItem('loginTime', new Date().toISOString());
+            const nip = document.getElementById('nip').value.trim();
+            const loginBtn = document.getElementById('loginBtn');
+            const loginText = document.getElementById('loginText');
+            const loginLoading = document.getElementById('loginLoading');
+            const errorMessage = document.getElementById('errorMessage');
+            const successMessage = document.getElementById('successMessage');
+
+            // Reset messages
+            errorMessage.style.display = 'none';
+            successMessage.style.display = 'none';
+
+            if (!nip) {
+                showError('⚠️ Silakan masukkan NIP');
+                return;
+            }
+
+            // Show loading
+            loginBtn.disabled = true;
+            loginText.style.display = 'none';
+            loginLoading.style.display = 'inline';
+
+            try {
+                console.log('Checking NIP:', nip);
                 
-                // Redirect ke halaman absen - PASTI BISA
-                window.location.href = './absen.html';
-            } else {
-                errorMessage.textContent = '❌ NIP tidak ditemukan. Gunakan NIP: 2094738515 untuk demo';
-                errorMessage.style.display = 'block';
+                // Cek NIP di Google Sheets
+                const isValid = await validateNIP(nip);
                 
-                // Sembunyikan error setelah 5 detik
-                setTimeout(() => {
-                    errorMessage.style.display = 'none';
-                }, 5000);
+                console.log('Validation result:', isValid);
+                
+                if (isValid.valid) {
+                    // Simpan status login dan data user
+                    localStorage.setItem('loggedIn', 'true');
+                    localStorage.setItem('nip', nip);
+                    localStorage.setItem('loginTime', new Date().toISOString());
+                    localStorage.setItem('currentUser', JSON.stringify(isValid.data));
+                    
+                    successMessage.textContent = `✅ Login berhasil! Selamat datang ${isValid.data.nama}`;
+                    successMessage.style.display = 'block';
+                    
+                    // Redirect ke halaman absen
+                    setTimeout(() => {
+                        window.location.href = './absen.html';
+                    }, 1500);
+                } else {
+                    showError('❌ NIP tidak ditemukan dalam database');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showError('❌ Gagal terhubung ke database. Coba lagi.');
+            } finally {
+                // Hide loading
+                loginBtn.disabled = false;
+                loginText.style.display = 'inline';
+                loginLoading.style.display = 'none';
             }
         });
 
+        function showError(message) {
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+        }
+
         // Focus ke input NIP saat halaman load
         document.getElementById('nip').focus();
+
+        // Test beberapa NIP dari sheets Anda
+        console.log('Test NIPs from your sheets:');
+        console.log('1999011001 - ADI NUGROHO');
+        console.log('1999011002 - AGUNG SETIAWAN');
+        console.log('1999011003 - AHMAD FAUZI');
     </script>
 </body>
 </html>
