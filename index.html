@@ -143,7 +143,7 @@
                 localStorage.setItem('loginTime', new Date().toISOString());
                 
                 // Redirect ke halaman absen - PASTI BISA
-                confirm('Apakah Anda yakin ingin keluar dari sistem?')
+                window.location.href = './absen.html';
             } else {
                 errorMessage.textContent = '❌ NIP tidak ditemukan. Gunakan NIP: 2094738515 untuk demo';
                 errorMessage.style.display = 'block';
