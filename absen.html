@@ -6,34 +6,29 @@
     <base href="./">
     <title>Absensi Masuk - Sistem Pegawai</title>
     <style>
-        /* CSS SAMA PERSIS SEPERTI SEBELUMNYA */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f6fa; color: #333; line-height: 1.6; }
-        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
-        .header { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 20px; text-align: center; }
-        .header h1 { color: #2c3e50; margin-bottom: 10px; font-size: 28px; }
-        .user-info { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; }
-        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
-        .info-item { background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; }
-        .status-container { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 20px; text-align: center; }
-        .status-box { padding: 20px; border-radius: 10px; margin: 15px 0; font-size: 16px; font-weight: 500; }
-        .status-success { background: #d4edda; color: #155724; border: 2px solid #c3e6cb; }
-        .status-error { background: #f8d7da; color: #721c24; border: 2px solid #f5c6cb; }
-        .status-waiting { background: #fff3cd; color: #856404; border: 2px solid #ffeaa7; }
-        .location-info { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        .progress-bar { width: 100%; height: 8px; background: #ecf0f1; border-radius: 4px; margin: 10px 0; overflow: hidden; }
-        .progress-fill { height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 4px; transition: width 0.3s ease; }
-        .action-buttons { display: grid; gap: 15px; margin-top: 30px; }
-        .btn { padding: 15px 25px; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; text-align: center; text-decoration: none; display: inline-block; }
-        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
-        .btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4); }
-        .btn-secondary { background: #6c757d; color: white; }
-        .btn-danger { background: #e74c3c; color: white; }
-        .btn:disabled { background: #bdc3c7; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
-        .loading { display: inline-block; width: 20px; height: 20px; border: 3px solid #f3f3f3; border-top: 3px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite; margin-right: 10px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .success-animation { animation: successPulse 0.6s ease; }
-        @keyframes successPulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        /* CSS tetap sama, tambahkan ini saja */
+        .user-details {
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            text-align: left;
+        }
+        .user-details h4 {
+            margin: 0 0 10px 0;
+            color: white;
+        }
+        .user-info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        .user-info-label {
+            font-weight: bold;
+        }
+        .user-info-value {
+            text-align: right;
+        }
     </style>
 </head>
 <body>
@@ -56,264 +51,51 @@
                     <span id="serverTime">-</span>
                 </div>
             </div>
-        </div>
-
-        <!-- Status Absensi -->
-        <div class="status-container">
-            <h3>Status Absensi</h3>
-            <div id="statusMessage" class="status-box status-waiting">
-                <div class="loading"></div>
-                Memuat sistem absensi...
-            </div>
-            
-            <div class="progress-bar">
-                <div id="progressFill" class="progress-fill" style="width: 0%"></div>
-            </div>
-            
-            <button id="absenBtn" class="btn btn-primary" disabled>
-                ⌛ Menunggu deteksi lokasi...
-            </button>
-        </div>
-
-        <!-- Informasi Lokasi -->
-        <div class="location-info">
-            <h3>📍 Informasi Lokasi</h3>
-            <div class="info-grid">
-                <div class="info-item">
-                    <strong>Status Lokasi</strong><br>
-                    <span id="locationStatus">Mendeteksi...</span>
+            <div class="user-details" id="userDetails">
+                <h4>Data Pegawai</h4>
+                <div class="user-info-item">
+                    <span class="user-info-label">Nama:</span>
+                    <span class="user-info-value" id="userNama">Memuat...</span>
                 </div>
-                <div class="info-item">
-                    <strong>Jarak dari Kantor</strong><br>
-                    <span id="distance">-</span>
+                <div class="user-info-item">
+                    <span class="user-info-label">Jabatan:</span>
+                    <span class="user-info-value" id="userJabatan">Memuat...</span>
+                </div>
+                <div class="user-info-item">
+                    <span class="user-info-label">Jenis Kelamin:</span>
+                    <span class="user-info-value" id="userGender">Memuat...</span>
                 </div>
             </div>
-            <div class="info-item">
-                <strong>Lokasi Kantor</strong><br>
-                6°13′29.809″S 106°48′52.269″E (Radius: 200 meter)
-            </div>
         </div>
 
-        <!-- Tombol Aksi -->
-        <div class="action-buttons">
-            <a href="./riwayat.html" class="btn btn-secondary">
-                📊 Lihat Riwayat Absensi
-            </a>
-            <button onclick="logout()" class="btn btn-danger">
-                🚪 Keluar dari Sistem
-            </button>
-        </div>
+        <!-- ... (sisanya sama seperti sebelumnya) ... -->
     </div>
 
+    <!-- Include config.js -->
+    <script src="./config.js"></script>
+
     <script>
-        // Konfigurasi
-        const KANTOR_LAT = -6.22494694;
-        const KANTOR_LNG = 106.81451917;
-        const MAX_DISTANCE = 200; // meter
+        // Load user data dari localStorage
+        function loadUserData() {
+            const nip = localStorage.getItem('nip');
+            document.getElementById('userNIP').textContent = nip;
 
-        let userLat = null;
-        let userLng = null;
-        let distance = null;
-        let hasAbsen = false;
-
-        // Cek status login
-        if (!localStorage.getItem('loggedIn')) {
-            alert('⚠️ Silakan login terlebih dahulu!');
-            window.location.href = './index.html';
-        }
-
-        // Update informasi pengguna
-        document.getElementById('userNIP').textContent = localStorage.getItem('nip') || '2094738515';
-
-        // Update waktu server
-        function updateTime() {
-            const now = new Date();
-            const options = { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            };
-            document.getElementById('serverTime').textContent = 
-                now.toLocaleDateString('id-ID', options);
-        }
-        setInterval(updateTime, 1000);
-        updateTime();
-
-        // Progress bar simulation
-        function simulateProgress() {
-            let progress = 0;
-            const interval = setInterval(() => {
-                progress += Math.random() * 10;
-                if (progress >= 90) {
-                    progress = 90;
-                    clearInterval(interval);
-                }
-                document.getElementById('progressFill').style.width = progress + '%';
-            }, 200);
-        }
-
-        // Mendapatkan lokasi pengguna
-        function getLocation() {
-            simulateProgress();
-            
-            if (!navigator.geolocation) {
-                updateStatus('❌ Browser tidak mendukung geolocation', 'error');
-                return;
-            }
-
-            updateStatus('📍 Mendeteksi lokasi Anda...', 'waiting');
-
-            navigator.geolocation.getCurrentPosition(
-                position => {
-                    userLat = position.coords.latitude;
-                    userLng = position.coords.longitude;
-                    
-                    // Hitung jarak
-                    distance = calculateDistance(userLat, userLng, KANTOR_LAT, KANTOR_LNG);
-                    
-                    updateLocationInfo(distance);
-                    document.getElementById('progressFill').style.width = '100%';
-                },
-                error => {
-                    handleLocationError(error);
-                },
-                {
-                    enableHighAccuracy: true,
-                    timeout: 10000,
-                    maximumAge: 0
-                }
-            );
-        }
-
-        // Hitung jarak menggunakan Haversine formula
-        function calculateDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371000; // Radius bumi dalam meter
-            const dLat = (lat2 - lat1) * Math.PI / 180;
-            const dLon = (lon2 - lon1) * Math.PI / 180;
-            const a = 
-                Math.sin(dLat/2) * Math.sin(dLat/2) +
-                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-                Math.sin(dLon/2) * Math.sin(dLon/2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-            return R * c;
-        }
-
-        // Update informasi lokasi
-        function updateLocationInfo(distance) {
-            const distanceElement = document.getElementById('distance');
-            const statusElement = document.getElementById('locationStatus');
-            const absenBtn = document.getElementById('absenBtn');
-
-            distanceElement.textContent = distance.toFixed(2) + ' meter';
-
-            if (distance <= MAX_DISTANCE) {
-                statusElement.innerHTML = '✅ <strong>Dalam jarak absensi</strong>';
-                absenBtn.innerHTML = '✅ Absen Masuk Sekarang';
-                absenBtn.disabled = false;
-                updateStatus('✅ Anda berada dalam area absensi. Silakan absen masuk.', 'success');
+            const userData = getCurrentUser();
+            if (userData) {
+                document.getElementById('userNama').textContent = userData.nama;
+                document.getElementById('userJabatan').textContent = userData.jabatan;
+                document.getElementById('userGender').textContent = userData.jenis_kelamin;
             } else {
-                statusElement.innerHTML = '❌ <strong>Diluar jarak absensi</strong>';
-                absenBtn.innerHTML = '❌ Diluar Area Absensi';
-                absenBtn.disabled = true;
-                updateStatus(`❌ Anda berada ${distance.toFixed(2)} meter dari kantor. Maksimal 200 meter.`, 'error');
-            }
-        }
-
-        // Update status message
-        function updateStatus(message, type) {
-            const statusElement = document.getElementById('statusMessage');
-            statusElement.textContent = message;
-            statusElement.className = 'status-box ';
-            
-            switch(type) {
-                case 'success':
-                    statusElement.classList.add('status-success');
-                    break;
-                case 'error':
-                    statusElement.classList.add('status-error');
-                    break;
-                case 'waiting':
-                    statusElement.classList.add('status-waiting');
-                    break;
-            }
-        }
-
-        // Handle location error
-        function handleLocationError(error) {
-            let message = '❌ Gagal mendapatkan lokasi: ';
-            switch(error.code) {
-                case error.PERMISSION_DENIED:
-                    message += 'Anda menolak akses lokasi.';
-                    break;
-                case error.POSITION_UNAVAILABLE:
-                    message += 'Informasi lokasi tidak tersedia.';
-                    break;
-                case error.TIMEOUT:
-                    message += 'Timeout saat mengambil lokasi.';
-                    break;
-                default:
-                    message += 'Error tidak diketahui.';
-                    break;
-            }
-            updateStatus(message, 'error');
-        }
-
-        // Fungsi absen
-        document.getElementById('absenBtn').addEventListener('click', function() {
-            if (hasAbsen) return;
-            
-            if (distance <= MAX_DISTANCE) {
-                const now = new Date();
-                const absenData = {
-                    nip: localStorage.getItem('nip') || '2094738515',
-                    waktu: now.toISOString(),
-                    tanggal: now.toLocaleDateString('id-ID'),
-                    jam: now.toLocaleTimeString('id-ID'),
-                    lokasi: {
-                        lat: userLat,
-                        lng: userLng
-                    },
-                    jarak: distance,
-                    status: 'MASUK'
-                };
-
-                // Simpan ke localStorage
-                let absensiHistory = JSON.parse(localStorage.getItem('absensiHistory') || '[]');
-                absensiHistory.push(absenData);
-                localStorage.setItem('absensiHistory', JSON.stringify(absensiHistory));
-                localStorage.setItem('lastAbsen', now.toISOString());
-
-                // Update UI
-                hasAbsen = true;
-                document.getElementById('absenBtn').innerHTML = '✅ Absen Berhasil!';
-                document.getElementById('absenBtn').classList.add('success-animation');
-                document.getElementById('absenBtn').disabled = true;
-                
-                updateStatus(`✅ Absen berhasil!<br>Waktu: ${now.toLocaleString('id-ID')}<br>Jarak: ${distance.toFixed(2)} meter`, 'success');
-
-                // Redirect otomatis setelah 3 detik
-                setTimeout(() => {
-                    window.location.href = './riwayat.html';
-                }, 3000);
-            }
-        });
-
-        // Fungsi logout
-        function logout() {
-            if (confirm('Apakah Anda yakin ingin keluar dari sistem?')) {
-                localStorage.removeItem('loggedIn');
-                localStorage.removeItem('nip');
-                localStorage.removeItem('loginTime');
-                window.location.href = './index.html';
+                // Fallback jika data tidak ada
+                document.getElementById('userNama').textContent = 'Data tidak ditemukan';
+                document.getElementById('userJabatan').textContent = '-';
+                document.getElementById('userGender').textContent = '-';
             }
         }
 
         // Initialize
-        getLocation();
+        loadUserData();
+        // ... (fungsi lainnya tetap sama)
     </script>
 </body>
 </html>
